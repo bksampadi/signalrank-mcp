@@ -1,11 +1,11 @@
 # SignalRank MCP
 
-**MCP access to SignalRank retrieval, with interfaces for counter-evidence and evidence ledgers.**
+**MCP interface for SignalRank retrieval.**
 
-SignalRank MCP is a thin interoperability layer over  
+SignalRank MCP is a thin interoperability layer over
 [SignalRank-RAG](https://github.com/bksampadi/SignalRank-RAG).
 
-It exposes SignalRank's evidence system to MCP-compatible clients without moving retrieval or ranking logic into the MCP server.
+It exposes SignalRank retrieval to MCP-compatible clients without duplicating retrieval or ranking logic.
 
 ```text
 MCP client / host
@@ -17,50 +17,34 @@ SignalRank MCP
 SignalRank-RAG
 ```
 
-## Tools
+## Tool
 
 ### `search`
 
-Search SignalRank and return ranked evidence without LLM synthesis.
+Search SignalRank and return ranked evidence with provenance.
 
 ```text
-search(query, mode="hybrid", top_k=5)
+search(query, mode="dense", top_k=5)
 ```
 
-### `retrieve_counter_evidence`
-
-Interface for retrieving evidence that challenges a claim and returning an evidence-ledger ID.
+Supported retrieval modes:
 
 ```text
-retrieve_counter_evidence(claim, top_k=5)
+bm25
+dense
+hybrid
 ```
 
-### `get_evidence_ledger`
-
-Interface for reading the support, counter, and unresolved evidence for a previous claim.
+Results preserve:
 
 ```text
-get_evidence_ledger(ledger_id)
-```
-
-Evidence ledgers are also exposed as MCP resources:
-
-```text
-signalrank://ledger/{ledger_id}
-```
-
-## Status
-
-```text
-[x] MCP Python SDK v2
-[x] SignalRank search
-[x] typed structured outputs
-[x] stdio
-[x] HTTP client tests
-[x] end-to-end MCP Inspector search
-[ ] Streamable HTTP smoke test
-[ ] counter-evidence service endpoint
-[ ] evidence-ledger service endpoint
+chunk_id
+doc_id
+text
+score
+rank
+source_path
+metadata
 ```
 
 ## Install
@@ -73,21 +57,21 @@ uv sync --extra dev
 
 ## Environment
 
-SignalRank MCP expects a running SignalRank-RAG service.
+SignalRank-RAG must be running.
 
-For local development, use any matching service token in both projects. For example:
+Set the same service token for SignalRank-RAG and SignalRank MCP:
 
 ```text
 SIGNALRANK_SERVICE_TOKEN=signalrank-local-dev
 ```
 
-SignalRank-RAG also requires your own Groq API key:
+SignalRank-RAG also requires:
 
 ```text
 GROQ_API_KEY=<your-groq-api-key>
 ```
 
-SignalRank MCP optionally accepts:
+SignalRank MCP defaults to:
 
 ```text
 SIGNALRANK_API_URL=http://127.0.0.1:8000
@@ -97,35 +81,36 @@ Do not commit API keys or production service tokens.
 
 ## Run
 
-### 1. Start SignalRank-RAG
+Start SignalRank-RAG:
 
-Windows CMD:
-
-```cmd
-set SIGNALRANK_SERVICE_TOKEN=signalrank-local-dev
-set GROQ_API_KEY=<your-groq-api-key>
-
+```bash
 uv run uvicorn signalrank.api.main:app --host 127.0.0.1 --port 8000
 ```
 
-### 2. Start SignalRank MCP
+Run with MCP Inspector:
 
-In a separate terminal:
-
-```cmd
-set SIGNALRANK_SERVICE_TOKEN=signalrank-local-dev
-
+```bash
 uv run mcp dev src/signalrank_mcp/server.py --with-editable .
 ```
 
-MCP Inspector will open in the browser.
-
-### stdio
-
-To run the MCP server directly over stdio:
+Or run directly over stdio:
 
 ```bash
 uv run signalrank-mcp
+```
+
+## Claude Code
+
+Register the server:
+
+```bash
+claude mcp add --env SIGNALRANK_SERVICE_TOKEN=signalrank-local-dev --transport stdio signalrank -- uv run signalrank-mcp
+```
+
+Check the connection:
+
+```bash
+claude mcp get signalrank
 ```
 
 ## Test
@@ -135,6 +120,8 @@ uv run pytest -q
 uv run ruff check .
 uv run pyright
 ```
+
+Tested end-to-end with MCP Inspector and Claude Code.
 
 ## License
 

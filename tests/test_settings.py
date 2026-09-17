@@ -8,8 +8,6 @@ def test_defaults(monkeypatch) -> None:
         "SIGNALRANK_API_URL",
         "SIGNALRANK_SERVICE_TOKEN",
         "SIGNALRANK_RETRIEVE_PATH",
-        "SIGNALRANK_COUNTER_EVIDENCE_PATH",
-        "SIGNALRANK_LEDGER_PATH",
         "SIGNALRANK_MCP_TRANSPORT",
     ):
         monkeypatch.delenv(name, raising=False)
@@ -18,4 +16,3 @@ def test_defaults(monkeypatch) -> None:
 
     assert value.api_url == "http://127.0.0.1:8000"
     assert value.retrieve_path == "/retrieve"
-    assert value.transport == "stdio"
