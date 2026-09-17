@@ -21,7 +21,5 @@ SignalRank MCP is a protocol adapter.
 │                      │
 │ SearchService        │
 │ reranking            │
-│ counter-evidence     │
-│ evidence ledger      │
 └──────────────────────┘
 ```
