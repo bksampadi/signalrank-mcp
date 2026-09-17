@@ -13,8 +13,6 @@ SignalRank MCP is a protocol adapter.
 │ SignalRank MCP       │
 │                      │
 │ search               │
-│ counter-evidence     │
-│ ledger               │
 └──────────┬───────────┘
            │ HTTP + service token
            ▼

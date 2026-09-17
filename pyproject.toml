@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "signalrank-mcp"
 version = "0.1.0"
-description = "MCP interface for SignalRank retrieval, counter-evidence, and evidence ledgers."
+description = "MCP interface for SignalRank retrieval."
 readme = "README.md"
 requires-python = ">=3.11,<3.14"
 license = { text = "MIT" }
